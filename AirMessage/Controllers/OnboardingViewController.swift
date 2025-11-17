@@ -124,5 +124,44 @@ class OnboardingViewController: NSViewController {
 			}
 		}
 	}
+	
+	@IBAction func onClickEditConnectEndpoint(_ sender: Any) {
+		//Create the alert
+		let alert = NSAlert()
+		alert.messageText = "Edit Connect Server"
+		alert.informativeText = "Enter a custom Connect server endpoint URL."
+		alert.addButton(withTitle: "Save")
+		alert.addButton(withTitle: "Cancel")
+		
+		//Create the text field
+		let textField = NSTextField(frame: NSRect(x: 0, y: 0, width: 300, height: 24))
+		textField.placeholderString = "wss://connect.example.com"
+		textField.stringValue = PreferencesManager.shared.connectEndpoint ?? ""
+		alert.accessoryView = textField
+		
+		//Show the alert
+		alert.beginSheetModal(for: self.view.window!) { response in
+			guard response == .alertFirstButtonReturn else { return }
+			
+			let endpoint = textField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+			
+			//Validate the endpoint
+			if !endpoint.isEmpty && !endpoint.hasPrefix("ws://") && !endpoint.hasPrefix("wss://") {
+				let errorAlert = NSAlert()
+				errorAlert.messageText = "Invalid Endpoint"
+				errorAlert.informativeText = "Connect server endpoint must start with ws:// or wss://."
+				errorAlert.alertStyle = .warning
+				errorAlert.beginSheetModal(for: self.view.window!)
+				return
+			}
+			
+			//Save the endpoint
+			if endpoint.isEmpty {
+				UserDefaults.standard.removeObject(forKey: "connectEndpoint")
+			} else {
+				PreferencesManager.shared.connectEndpoint = endpoint
+			}
+		}
+	}
 }
 

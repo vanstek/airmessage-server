@@ -1188,6 +1188,7 @@
 				EDC8985C2752BF290081BDB7 /* Sources */,
 				EDC8985D2752BF290081BDB7 /* Frameworks */,
 				EDC8985E2752BF290081BDB7 /* Resources */,
+				EDC89999CODESIGN00000001 /* Sign OpenSSL Framework */,
 			);
 			buildRules = (
 			);
@@ -1460,6 +1461,27 @@
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		EDC89999CODESIGN00000001 /* Sign OpenSSL Framework */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Sign OpenSSL Framework";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "codesign --force --sign - --timestamp=none --generate-entitlement-der \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.${WRAPPER_EXTENSION}\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
 		ED28095F25A20333009E7636 /* Debug */ = {

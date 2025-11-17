@@ -15,9 +15,6 @@ class PreferencesViewController: NSViewController {
 	@IBOutlet weak var groupPort: NSStackView!
 	@IBOutlet weak var inputPort: NSTextField!
 	
-	@IBOutlet weak var groupConnectEndpoint: NSStackView!
-	@IBOutlet weak var inputConnectEndpoint: NSTextField!
-	
 	@IBOutlet weak var checkboxAutoUpdate: NSButton!
 	@IBOutlet weak var checkboxBetaUpdate: NSButton!
 	
@@ -26,8 +23,9 @@ class PreferencesViewController: NSViewController {
 	
 	@IBOutlet weak var buttonSignOut: NSButton!
 	@IBOutlet weak var labelSignOut: NSTextField!
+	@IBOutlet weak var buttonConnectEndpoint: NSButton!
 	
-	private var isShowingPort, isShowingConnectEndpoint, isShowingFaceTime: Bool!
+	private var isShowingPort, isShowingFaceTime, isShowingConnectEndpoint: Bool!
 	
 	static func open() {
 		//If we're already showing the window, just focus it
@@ -58,16 +56,15 @@ class PreferencesViewController: NSViewController {
 			inputPort.formatter = PortFormatter()
 			isShowingPort = true
 		} else {
-			groupPort?.removeFromSuperview()
+			groupPort.removeFromSuperview()
 			isShowingPort = false
 		}
 		
+		//Show/hide Connect endpoint button
 		if PreferencesManager.shared.accountType == .connect {
-			inputConnectEndpoint.stringValue = PreferencesManager.shared.connectEndpoint
-			inputConnectEndpoint.placeholderString = Bundle.main.infoDictionary?["CONNECT_ENDPOINT"] as? String ?? ""
 			isShowingConnectEndpoint = true
 		} else {
-			groupConnectEndpoint?.removeFromSuperview()
+			buttonConnectEndpoint?.isHidden = true
 			isShowingConnectEndpoint = false
 		}
 		
@@ -141,42 +138,6 @@ class PreferencesViewController: NSViewController {
 			}
 		}
 		
-		if isShowingConnectEndpoint {
-			//Validate Connect endpoint input
-			let endpointValue = inputConnectEndpoint.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
-			
-			//Validate URL format
-			if !endpointValue.isEmpty {
-				guard let url = URL(string: endpointValue),
-					  let scheme = url.scheme,
-					  (scheme == "ws" || scheme == "wss") else {
-					let alert = NSAlert()
-					alert.alertStyle = .critical
-					alert.messageText = "Invalid Connect endpoint"
-					alert.informativeText = "Please enter a valid WebSocket URL (ws:// or wss://)"
-					alert.beginSheetModal(for: view.window!)
-					return
-				}
-			}
-			
-			let originalEndpoint = PreferencesManager.shared.connectEndpoint
-			
-			//Save change to disk
-			PreferencesManager.shared.connectEndpoint = endpointValue
-			
-			//Restart the server if the endpoint changed
-			if originalEndpoint != endpointValue {
-				//Make sure the server is running
-				if (NSApplication.shared.delegate as! AppDelegate).currentServerState == .running {
-					//Restart the server with new endpoint
-					guard let userID = PreferencesManager.shared.connectUserID else { return }
-					ConnectionManager.shared.stop()
-					ConnectionManager.shared.setProxy(DataProxyConnect(userID: userID))
-					ConnectionManager.shared.start()
-				}
-			}
-		}
-		
 		//Save update changes to disk
 		PreferencesManager.shared.checkUpdates = checkboxAutoUpdate.state == .on
 		PreferencesManager.shared.betaUpdates = checkboxBetaUpdate.state == .on
@@ -238,6 +199,62 @@ class PreferencesViewController: NSViewController {
 			
 			//Show the onboarding window
             OnboardingViewController.open()
+		}
+	}
+	
+	@IBAction func onClickEditConnectEndpoint(_ sender: NSButton) {
+		let alert = NSAlert()
+		alert.messageText = "Connect Server Endpoint"
+		alert.informativeText = "Enter your AirMessage Connect server URL (e.g., wss://connect.yourdomain.com)"
+		
+		let inputField = NSTextField(frame: NSRect(x: 0, y: 0, width: 300, height: 24))
+		inputField.stringValue = PreferencesManager.shared.connectEndpoint
+		inputField.placeholderString = Bundle.main.infoDictionary?["CONNECT_ENDPOINT"] as? String ?? "wss://"
+		alert.accessoryView = inputField
+		
+		alert.addButton(withTitle: "Save")
+		alert.addButton(withTitle: "Cancel")
+		
+		alert.beginSheetModal(for: view.window!) { response in
+			if response == .alertFirstButtonReturn {
+				let endpointValue = inputField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+				
+				//Validate URL format if not empty
+				if !endpointValue.isEmpty {
+					guard let url = URL(string: endpointValue),
+						  let scheme = url.scheme,
+						  (scheme == "ws" || scheme == "wss") else {
+						let errorAlert = NSAlert()
+						errorAlert.alertStyle = .critical
+						errorAlert.messageText = "Invalid Connect Endpoint"
+						errorAlert.informativeText = "Please enter a valid WebSocket URL (ws:// or wss://)"
+						errorAlert.beginSheetModal(for: self.view.window!)
+						return
+					}
+				}
+				
+				let originalEndpoint = PreferencesManager.shared.connectEndpoint
+				
+				//Save change to disk
+				PreferencesManager.shared.connectEndpoint = endpointValue
+				
+				//Restart the server if the endpoint changed
+				if originalEndpoint != endpointValue {
+					//Make sure the server is running
+					if (NSApplication.shared.delegate as! AppDelegate).currentServerState == .running {
+						//Restart the server with new endpoint
+						guard let userID = PreferencesManager.shared.connectUserID else { return }
+						ConnectionManager.shared.stop()
+						ConnectionManager.shared.setProxy(DataProxyConnect(userID: userID))
+						ConnectionManager.shared.start()
+					}
+				}
+			}
+		}
+		
+		//Focus the input field
+		DispatchQueue.main.async {
+			alert.window.makeFirstResponder(inputField)
 		}
 	}
 	

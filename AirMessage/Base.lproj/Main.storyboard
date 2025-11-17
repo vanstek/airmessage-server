@@ -407,6 +407,16 @@ DQ
                                     <segue destination="Skp-rU-QjG" kind="sheet" identifier="PasswordEntry" id="vea-fE-dcY"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="obs-edit-connect-onboarding">
+                                <rect key="frame" x="18" y="13" width="180" height="32"/>
+                                <buttonCell key="cell" type="push" title="Edit Connect Server…" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="obs-edit-connect-cell-onboarding">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="onClickEditConnectEndpoint:" target="j4o-39-b7b" id="obs-edit-connect-action-onboarding"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="VOw-pD-d3q" secondAttribute="trailing" id="DdQ-Ex-Z4i"/>
@@ -424,6 +434,8 @@ DQ
                             <constraint firstItem="cwP-HO-5MA" firstAttribute="leading" secondItem="X9u-yL-9XP" secondAttribute="leading" constant="20" symbolic="YES" id="sqp-fr-jKW"/>
                             <constraint firstAttribute="bottom" secondItem="VOw-pD-d3q" secondAttribute="bottom" id="uyB-la-D1S"/>
                             <constraint firstAttribute="trailing" secondItem="ndj-pf-12z" secondAttribute="trailing" constant="20" symbolic="YES" id="ymx-N3-JnB"/>
+                            <constraint firstItem="obs-edit-connect-onboarding" firstAttribute="leading" secondItem="X9u-yL-9XP" secondAttribute="leading" constant="20" symbolic="YES" id="obs-edit-connect-leading-onboarding"/>
+                            <constraint firstItem="obs-edit-connect-onboarding" firstAttribute="baseline" secondItem="U3d-e9-3Nj" secondAttribute="baseline" id="obs-edit-connect-baseline-onboarding"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -587,6 +599,16 @@ Gw
                                     <action selector="dismissController:" target="Y7F-lv-57a" id="i8n-Dc-3Ec"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="srv-ed-btn">
+                                <rect key="frame" x="293" y="13" width="183" height="32"/>
+                                <buttonCell key="cell" type="push" title="Edit Connect Server…" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="srv-ed-cel">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="onClickEditConnectEndpoint:" target="Y7F-lv-57a" id="srv-ed-act"/>
+                                </connections>
+                            </button>
                             <progressIndicator fixedFrame="YES" maxValue="100" displayedWhenStopped="NO" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="2Uh-lB-MyH">
                                 <rect key="frame" x="229" y="261" width="32" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -607,6 +629,8 @@ Gw
                         <constraints>
                             <constraint firstItem="MmA-aP-aD0" firstAttribute="leading" secondItem="MDN-Zm-Nl6" secondAttribute="leading" constant="20" symbolic="YES" id="H00-H7-ZLu"/>
                             <constraint firstAttribute="bottom" secondItem="MmA-aP-aD0" secondAttribute="bottom" constant="20" symbolic="YES" id="v3t-y4-Tsl"/>
+                            <constraint firstAttribute="trailing" secondItem="srv-ed-btn" secondAttribute="trailing" constant="20" symbolic="YES" id="srv-ed-trail"/>
+                            <constraint firstAttribute="bottom" secondItem="srv-ed-btn" secondAttribute="bottom" constant="20" symbolic="YES" id="srv-ed-btm"/>
                         </constraints>
                     </view>
                     <connections>
@@ -720,6 +744,40 @@ Gw
                                                 </userDefinedRuntimeAttributes>
                                                 <connections>
                                                     <segue destination="Skp-rU-QjG" kind="sheet" identifier="PasswordEntry" id="aM8-FM-ABJ"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <visibilityPriorities>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                        </visibilityPriorities>
+                                        <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                        </customSpacing>
+                                    </stackView>
+                                    <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" ambiguous="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dXp-9K-mYz">
+                                        <rect key="frame" x="8" y="225" width="240" height="20"/>
+                                        <subviews>
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8v3-fL-pT6">
+                                                <rect key="frame" x="-2" y="2" width="104" height="16"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="100" id="bVx-h8-LQm"/>
+                                                </constraints>
+                                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Connect Server:" id="9tF-Yr-Hb2">
+                                                    <font key="font" usesAppearanceFont="YES"/>
+                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                </textFieldCell>
+                                            </textField>
+                                            <button verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kN8-mP-rQx">
+                                                <rect key="frame" x="101" y="-7" width="146" height="32"/>
+                                                <buttonCell key="cell" type="push" title="Edit Connect Server…" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7Lp-gH-Nfq">
+                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                    <font key="font" metaFont="system"/>
+                                                </buttonCell>
+                                                <connections>
+                                                    <action selector="onClickEditConnectEndpoint:" target="TFo-6b-9Gw" id="3vK-Rj-bHz"/>
                                                 </connections>
                                             </button>
                                         </subviews>
@@ -985,8 +1043,10 @@ DQ
                                     <integer value="1000"/>
                                     <integer value="1000"/>
                                     <integer value="1000"/>
+                                    <integer value="1000"/>
                                 </visibilityPriorities>
                                 <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
@@ -1005,6 +1065,7 @@ DQ
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="buttonConnectEndpoint" destination="kN8-mP-rQx" id="hN8-Zv-8Kw"/>
                         <outlet property="buttonSignOut" destination="Ywt-us-HOW" id="1Ul-x1-G50"/>
                         <outlet property="checkboxAutoUpdate" destination="64v-87-Mw3" id="Coh-fL-oYO"/>
                         <outlet property="checkboxBetaUpdate" destination="7if-Yx-qbX" id="ABN-ED-Lze"/>

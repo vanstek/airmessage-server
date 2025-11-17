@@ -19,7 +19,7 @@ class AccountConnectViewController: NSViewController {
 	@IBOutlet weak var loadingProgressIndicator: NSProgressIndicator!
 	@IBOutlet weak var loadingLabel: NSTextField!
 	
-	let redirectHandler = OIDRedirectHTTPHandler(successURL: nil)
+	let redirectHandler = OIDRedirectHTTPHandler(successURL: URL(string: "http://localhost/success")!)
 	
 	private var isConnecting = false
 	private var currentDataProxy: DataProxyConnect!
@@ -203,6 +203,45 @@ class AccountConnectViewController: NSViewController {
 			showError(message: serverState.description, showReconnect: serverState.recoveryType == .retry)
 			
 			isConnecting = false
+		}
+	}
+	
+	@IBAction func onClickEditConnectEndpoint(_ sender: Any) {
+		//Show a dialog to edit the Connect endpoint
+		let alert = NSAlert()
+		alert.messageText = "Connect Server"
+		alert.informativeText = "Enter the WebSocket URL of your Connect server:"
+		alert.addButton(withTitle: "OK")
+		alert.addButton(withTitle: "Cancel")
+		
+		let textField = NSTextField(frame: NSRect(x: 0, y: 0, width: 300, height: 24))
+		textField.placeholderString = "wss://connect.example.com"
+		textField.stringValue = PreferencesManager.shared.connectEndpoint ?? ""
+		alert.accessoryView = textField
+		
+		alert.beginSheetModal(for: view.window!) { response in
+			if response == .alertFirstButtonReturn {
+				let newEndpoint = textField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+				
+			//Validate the URL
+			guard !newEndpoint.isEmpty else {
+				//Clear the endpoint
+				UserDefaults.standard.removeObject(forKey: "connectEndpoint")
+				return
+			}
+			
+			guard newEndpoint.hasPrefix("ws://") || newEndpoint.hasPrefix("wss://") else {
+					let errorAlert = NSAlert()
+					errorAlert.messageText = "Invalid URL"
+					errorAlert.informativeText = "The Connect server URL must start with ws:// or wss://"
+					errorAlert.addButton(withTitle: "OK")
+					errorAlert.beginSheetModal(for: self.view.window!, completionHandler: nil)
+					return
+				}
+				
+				//Save the new endpoint
+				PreferencesManager.shared.connectEndpoint = newEndpoint
+			}
 		}
 	}
 }
