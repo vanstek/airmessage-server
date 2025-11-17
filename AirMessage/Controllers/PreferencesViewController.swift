@@ -15,6 +15,9 @@ class PreferencesViewController: NSViewController {
 	@IBOutlet weak var groupPort: NSStackView!
 	@IBOutlet weak var inputPort: NSTextField!
 	
+	@IBOutlet weak var groupConnectEndpoint: NSStackView!
+	@IBOutlet weak var inputConnectEndpoint: NSTextField!
+	
 	@IBOutlet weak var checkboxAutoUpdate: NSButton!
 	@IBOutlet weak var checkboxBetaUpdate: NSButton!
 	
@@ -24,7 +27,7 @@ class PreferencesViewController: NSViewController {
 	@IBOutlet weak var buttonSignOut: NSButton!
 	@IBOutlet weak var labelSignOut: NSTextField!
 	
-	private var isShowingPort, isShowingFaceTime: Bool!
+	private var isShowingPort, isShowingConnectEndpoint, isShowingFaceTime: Bool!
 	
 	static func open() {
 		//If we're already showing the window, just focus it
@@ -55,8 +58,17 @@ class PreferencesViewController: NSViewController {
 			inputPort.formatter = PortFormatter()
 			isShowingPort = true
 		} else {
-			groupPort.removeFromSuperview()
+			groupPort?.removeFromSuperview()
 			isShowingPort = false
+		}
+		
+		if PreferencesManager.shared.accountType == .connect {
+			inputConnectEndpoint.stringValue = PreferencesManager.shared.connectEndpoint
+			inputConnectEndpoint.placeholderString = Bundle.main.infoDictionary?["CONNECT_ENDPOINT"] as? String ?? ""
+			isShowingConnectEndpoint = true
+		} else {
+			groupConnectEndpoint?.removeFromSuperview()
+			isShowingConnectEndpoint = false
 		}
 		
 		checkboxAutoUpdate.state = PreferencesManager.shared.checkUpdates ? .on : .off
@@ -124,6 +136,42 @@ class PreferencesViewController: NSViewController {
 					//Restart the server
 					ConnectionManager.shared.stop()
 					ConnectionManager.shared.setProxy(DataProxyTCP(port: inputPortValue))
+					ConnectionManager.shared.start()
+				}
+			}
+		}
+		
+		if isShowingConnectEndpoint {
+			//Validate Connect endpoint input
+			let endpointValue = inputConnectEndpoint.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+			
+			//Validate URL format
+			if !endpointValue.isEmpty {
+				guard let url = URL(string: endpointValue),
+					  let scheme = url.scheme,
+					  (scheme == "ws" || scheme == "wss") else {
+					let alert = NSAlert()
+					alert.alertStyle = .critical
+					alert.messageText = "Invalid Connect endpoint"
+					alert.informativeText = "Please enter a valid WebSocket URL (ws:// or wss://)"
+					alert.beginSheetModal(for: view.window!)
+					return
+				}
+			}
+			
+			let originalEndpoint = PreferencesManager.shared.connectEndpoint
+			
+			//Save change to disk
+			PreferencesManager.shared.connectEndpoint = endpointValue
+			
+			//Restart the server if the endpoint changed
+			if originalEndpoint != endpointValue {
+				//Make sure the server is running
+				if (NSApplication.shared.delegate as! AppDelegate).currentServerState == .running {
+					//Restart the server with new endpoint
+					guard let userID = PreferencesManager.shared.connectUserID else { return }
+					ConnectionManager.shared.stop()
+					ConnectionManager.shared.setProxy(DataProxyConnect(userID: userID))
 					ConnectionManager.shared.start()
 				}
 			}

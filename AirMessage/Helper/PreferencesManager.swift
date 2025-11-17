@@ -25,6 +25,7 @@ class PreferencesManager {
 		//Storage
 		case connectUserID
 		case connectEmailAddress
+		case connectEndpoint
 	}
 	
 	///Registers default preferences values
@@ -99,6 +100,19 @@ class PreferencesManager {
 		}
 		set(newValue) {
 			UserDefaults.standard.set(newValue, forKey: UDKeys.connectEmailAddress.rawValue)
+		}
+	}
+	
+	var connectEndpoint: String {
+		get {
+			// Return custom endpoint if set, otherwise fall back to the default from Info.plist
+			if let customEndpoint = UserDefaults.standard.string(forKey: UDKeys.connectEndpoint.rawValue), !customEndpoint.isEmpty {
+				return customEndpoint
+			}
+			return Bundle.main.infoDictionary?["CONNECT_ENDPOINT"] as? String ?? ""
+		}
+		set(newValue) {
+			UserDefaults.standard.set(newValue, forKey: UDKeys.connectEndpoint.rawValue)
 		}
 	}
 	

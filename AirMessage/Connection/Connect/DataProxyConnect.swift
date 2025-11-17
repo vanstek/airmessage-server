@@ -84,7 +84,7 @@ class DataProxyConnect: DataProxy {
 		} else {
 			queryItems.append(URLQueryItem(name: "user_id", value: userID))
 		}
-		var components = URLComponents(string: Bundle.main.infoDictionary!["CONNECT_ENDPOINT"] as! String)!
+		var components = URLComponents(string: PreferencesManager.shared.connectEndpoint)!
 		components.queryItems = queryItems
 		
 		var headers = HTTPHeaders()

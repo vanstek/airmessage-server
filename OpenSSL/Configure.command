@@ -15,7 +15,7 @@ rm -rf Headers libcrypto.a
 
 #Download OpenSSL
 echo "Downloading OpenSSL version $OPENSSL_VERSION..."
-curl https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz --output openssl-$OPENSSL_VERSION.tar.gz --silent
+curl -L https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz --output openssl-$OPENSSL_VERSION.tar.gz --silent
 tar -xf openssl-$OPENSSL_VERSION.tar.gz
 pushd openssl-$OPENSSL_VERSION
 
